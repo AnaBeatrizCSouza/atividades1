@@ -1,0 +1,219 @@
+DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMBA</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    header {
+      background-color: red;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .login-page, .dashboard {
+      display: none;
+    }
+    .login-page.active, .dashboard.active {
+      display: block;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding-top: 60px;
+    }
+
+    .login-title {
+      background-color: red;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard {
+      background-color: #333;
+      color: white;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+
+    .menu {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 0;
+  overflow: hidden;
+  background-color: #b40000;
+  padding: 0;
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease, padding 0.3s ease;
+  z-index: 1000;
+}
+
+.menu.active {
+  width: 200px;
+  padding: 20px;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 0;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.menu.active a {
+  opacity: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 10px;
+  padding: 20px;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.dashboard.menu-open .grid {
+  margin-left: 200px;
+}
+
+    .rect {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+    }
+
+    .green { background-color: green; }
+    .yellow { background-color: goldenrod; }
+    .red { background-color: red; }
+    .gray { background-color: gray; }
+
+    .panel {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      color: black;
+      padding: 20px;
+      border: 2px solid #444;
+      display: none;
+      z-index: 1002;
+    }
+  </style>
+</head>
+<body>
+
+  <header>SENAI</header>
+
+  <div class="login-page active">
+    <div class="login-form">
+      <h2 class="login-title">Login</h2>
+      <input type="text" id="username" placeholder="Usuário">
+      <input type="password" id="password" placeholder="Senha">
+      <button onclick="login()">Entrar</button>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+    <div class="menu" id="menu">
+      <a href="#">Tela Principal</a>
+      <a href="#">Mapa dos Sensores</a>
+      <a href="#">Adicionar Bateria</a>
+      <a href="#">Estoque de Baterias</a>
+      <a href="#">Adicionar Usuário</a>
+      <a href="#" onclick="logout()">Log Out</a>
+    </div>
+
+    <div class="grid" id="grid">
+      <!-- Retângulos gerados por JS -->
+    </div>
+  </div>
+
+  <div class="panel" id="infoPanel">
+    <p><strong>Nível de bateria:</strong> 85%</p>
+    <p><strong>Data de troca da bateria:</strong> 10/05/2025</p>
+    <p><a href="#" target="_blank">Ver no mapa</a></p>
+    <p><strong>Histórico:</strong></p>
+    <ul>
+      <li>Sensor 01 - 2 dias</li>
+      <li>Sensor 04 - 5 dias</li>
+    </ul>
+    <p><strong>Última recarga:</strong> 08/05/2025</p>
+    <button onclick="closePanel()">Fechar</button>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if(user === 'admin' && pass === '1234') {
+        document.querySelector('.login-page').classList.remove('active');
+        document.querySelector('.dashboard').classList.add('active');
+        generateGrid();
+      } else {
+        alert('Usuário ou senha incorretos');
+      }
+    }
+
+    function logout() {
+      document.querySelector('.dashboard').classList.remove('active');
+      document.querySelector('.login-page').classList.add('active');
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.classList.toggle('active');
+    }
+
+    function generateGrid() {
+      const grid = document.getElementById('grid');
+      const colors = ['green', 'yellow', 'green', 'green', 'gray', 'green'];
+      grid.innerHTML = ""; // limpar se já tiver conteúdo
+      for(let i = 1; i <= 120; i++) {
+        const div = document.createElement('div');
+        div.className = `rect ${colors[i % 6]}`;
+        div.innerText = i;
+        div.onclick = () => document.getElementById('infoPanel').style.display = 'block';
+        grid.appendChild(div);
+      }
+    }
+
+    function closePanel() {
+      document.getElementById('infoPanel').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
